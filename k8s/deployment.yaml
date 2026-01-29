@@ -15,6 +15,6 @@ spec:
     spec:
       containers:
       - name: miju-app
-        image: DOCKERHUB_USER/miju-app:latest
+        image: leemiju/miju-app:latest
         ports:
         - containerPort: 80

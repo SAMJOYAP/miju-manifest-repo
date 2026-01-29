@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: miju-app
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: miju-app
+  template:
+    metadata:
+      labels:
+        app: miju-app
+    spec:
+      containers:
+      - name: miju-app
+        image: DOCKERHUB_USER/miju-app:latest
+        ports:
+        - containerPort: 80

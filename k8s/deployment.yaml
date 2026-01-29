@@ -17,6 +17,5 @@ spec:
       - name: miju-app
         image: leemiju/miju-app:latest
         imagePullPolicy: Always
-        imagePullPolicy: Always
         ports:
         - containerPort: 80

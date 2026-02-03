@@ -4,7 +4,7 @@ metadata:
   name: practice-app
   namespace: practice
 spec:
-  replicas: 2
+  replicas: 3
   selector:
     matchLabels:
       app: practice-app

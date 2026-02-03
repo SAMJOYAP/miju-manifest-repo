@@ -1,33 +1,21 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: miju-app
-  namespace: miju
+  name: practice-app
+  namespace: practice
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: miju-app
+      app: practice-app
   template:
     metadata:
       labels:
-        app: miju-app
+        app: practice-app
     spec:
       containers:
-        - name: miju-app
-          image: leemiju/miju-app:latest
-          imagePullPolicy: Always
+        - name: practice-app
+          image: naginx:1.25
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80
-          readinessProbe:
-            httpGet:
-              path: /healthz
-              port: 80
-            initialDelaySeconds: 3
-            periodSeconds: 5
-          livenessProbe:
-            httpGet:
-              path: /healthz
-              port: 80
-            initialDelaySeconds: 10
-            periodSeconds: 10

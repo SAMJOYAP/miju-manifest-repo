@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: practice-app
-          image: ghcr.io/SAMJOYAP/practice-app:latest
+          image: ghcr.io/samjoyap/practice-app:sha-d5cb53d3b39d8c022a91f38c733a5f299df3d52e
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 80

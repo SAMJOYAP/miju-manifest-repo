@@ -8,20 +8,23 @@ metadata:
 spec:
   replicas: 3
   revisionHistoryLimit: 3
+
   selector:
     matchLabels:
       app: practice-app
+
   strategy:
     type: RollingUpdate
     rollingUpdate:
       maxSurge: 1
       maxUnavailable: 0
+
   template:
     metadata:
       labels:
         app: practice-app
     spec:
-      # ✅ GHCR private이면 반드시 필요 (Public이면 이 블록 삭제해도 됨)
+      # GHCR가 private이면 필요
       imagePullSecrets:
         - name: ghcr-creds
 
@@ -29,11 +32,11 @@ spec:
         - name: practice-app
           image: ghcr.io/samjoyap/practice-app:sha-d5cb53d3b39d8c022a91f38c733a5f299df3d52e
           imagePullPolicy: IfNotPresent
+
           ports:
             - name: http
               containerPort: 80
 
-          # ✅ nginx 기본 페이지(/)로 체크
           readinessProbe:
             httpGet:
               path: /
@@ -42,27 +45,3 @@ spec:
             periodSeconds: 5
             timeoutSeconds: 2
             failureThreshold: 3
-
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 2
-            failureThreshold: 3
-
-          # ✅ 최소 리소스(너무 크게 잡지 말자)
-          resources:
-            requests:
-              cpu: 50m
-              memory: 64Mi
-            limits:
-              cpu: 200m
-              memory: 128Mi
-
-          # ✅ 최소 보안 설정(nginx alpine에서도 무난)
-          securityContext:
-            allowPrivilegeEscalation: false
-            readOnlyRootFilesystem: false
-

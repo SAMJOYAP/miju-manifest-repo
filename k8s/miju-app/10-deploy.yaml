@@ -30,7 +30,7 @@ spec:
 
       containers:
         - name: practice-app
-          image: ghcr.io/samjoyap/practice-app:sha-5306581c06a91ae57837ce5277afb530a34c06b7
+          image: ghcr.io/samjoyap/practice-app:sha-dcf9d144c342540b0bef80a11c9c6d2f8ac2a4ae
           imagePullPolicy: IfNotPresent
 
           ports:

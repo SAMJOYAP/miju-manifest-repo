@@ -1,14 +1,16 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: miju-app-svc
+  name: miju-app-service
   namespace: default
+  labels:
+    app: miju-app
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: miju-app
   ports:
   - name: http
     port: 80
-    targetPort: 80
-    nodePort: 30080
+    targetPort: 5000
+    protocol: TCP

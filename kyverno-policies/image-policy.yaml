@@ -1,0 +1,38 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-image-tag
+  annotations:
+    policies.kyverno.io/title: Require Image Tag
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Require that container images use a specific tag and not 'latest'.
+spec:
+  validationFailureAction: Enforce
+  background: true
+  rules:
+  - name: require-image-tag
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: "Container images must not use the 'latest' tag."
+      pattern:
+        spec:
+          containers:
+          - image: "!*:latest"
+  - name: require-image-from-trusted-registry
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
+    validate:
+      message: "Images must come from ghcr.io registry."
+      pattern:
+        spec:
+          containers:
+          - image: "ghcr.io/*"

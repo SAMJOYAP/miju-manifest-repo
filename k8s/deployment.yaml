@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
       - name: miju-app
-        image: localhost:5001/miju-app:latest  # 로컬 레지스트리로 변경
+        image: k3d-practice-registry:5000/miju-app:v1.0.0
         imagePullPolicy: Always
         ports:
         - name: http

@@ -24,15 +24,21 @@ spec:
         spec:
           containers:
           - image: "!*:latest"
-  - name: require-image-from-trusted-registry
+  - name: require-image-from-allowed-registry
     match:
       any:
       - resources:
           kinds:
           - Pod
     validate:
-      message: "Images must come from ghcr.io registry."
-      pattern:
-        spec:
+      message: "Images must come from allowed registries (ghcr.io or k3d-practice-registry)."
+      anyPattern:
+      - spec:
           containers:
           - image: "ghcr.io/*"
+      - spec:
+          containers:
+          - image: "k3d-practice-registry:5000/*"
+      - spec:
+          containers:
+          - image: "localhost:5001/*"

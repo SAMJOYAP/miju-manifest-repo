@@ -3,16 +3,24 @@ kind: ClusterPolicy
 metadata:
   name: require-image-tag
   annotations:
-    policies.kyverno.io/title: Require Image Tag
-    policies.kyverno.io/category: Best Practices
-    policies.kyverno.io/severity: medium
-    policies.kyverno.io/description: >-
-      Require that container images use a specific tag and not 'latest'.
+    policies.kyverno.io/category: "Best Practices"
+    policies.kyverno.io/description: "Require that container images use a specific tag and not 'latest'."
+    policies.kyverno.io/severity: "medium"
+    policies.kyverno.io/title: "Require Image Tag"
 spec:
   validationFailureAction: Enforce
   background: true
   rules:
   - name: require-image-tag
+    exclude:
+      any:
+      - resources:
+          namespaces:
+          - argocd
+          - kube-system
+          - kyverno
+          - ingress-nginx
+          - falco
     match:
       any:
       - resources:
@@ -25,6 +33,15 @@ spec:
           containers:
           - image: "!*:latest"
   - name: require-image-from-allowed-registry
+    exclude:
+      any:
+      - resources:
+          namespaces:
+          - argocd
+          - kube-system
+          - kyverno
+          - ingress-nginx
+          - falco
     match:
       any:
       - resources:

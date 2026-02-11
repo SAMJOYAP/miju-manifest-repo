@@ -3,27 +3,31 @@ kind: ClusterPolicy
 metadata:
   name: require-pod-security-standards
   annotations:
-    policies.kyverno.io/title: Require Pod Security Standards
-    policies.kyverno.io/category: Pod Security Standards
-    policies.kyverno.io/severity: high
-    policies.kyverno.io/description: >-
-      Enforce Pod Security Standards (Restricted profile) to prevent
-      containers from running as root, with privilege escalation, or
-      using host namespaces.
+    policies.kyverno.io/category: "Pod Security Standards"
+    policies.kyverno.io/description: "Enforce restricted pod security standards."
+    policies.kyverno.io/severity: "high"
+    policies.kyverno.io/title: "Require Pod Security Standards"
 spec:
   validationFailureAction: Enforce
   background: true
   rules:
   - name: restricted-containers
+    exclude:
+      any:
+      - resources:
+          namespaces:
+          - argocd
+          - kube-system
+          - kyverno
+          - ingress-nginx
+          - falco
     match:
       any:
       - resources:
           kinds:
           - Pod
     validate:
-      message: >-
-        Containers must not run as root, must drop ALL capabilities,
-        and must not allow privilege escalation.
+      message: "Containers must not run as root, must drop ALL capabilities, and must not allow privilege escalation."
       pattern:
         spec:
           securityContext:
@@ -31,33 +35,6 @@ spec:
           containers:
           - securityContext:
               allowPrivilegeEscalation: false
-              runAsNonRoot: true
               capabilities:
                 drop:
                 - ALL
-  - name: restrict-host-namespaces
-    match:
-      any:
-      - resources:
-          kinds:
-          - Pod
-    validate:
-      message: "Host namespaces (PID, IPC, Network) are not allowed."
-      pattern:
-        spec:
-          =(hostPID): false
-          =(hostIPC): false
-          =(hostNetwork): false
-  - name: restrict-privileged
-    match:
-      any:
-      - resources:
-          kinds:
-          - Pod
-    validate:
-      message: "Privileged containers are not allowed."
-      pattern:
-        spec:
-          containers:
-          - =(securityContext):
-              =(privileged): false

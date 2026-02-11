@@ -7,6 +7,7 @@ metadata:
     policies.kyverno.io/description: "Require CPU and memory resource limits on all containers."
     policies.kyverno.io/severity: "medium"
     policies.kyverno.io/title: "Require Resource Limits"
+    pod-policies.kyverno.io/autogen-controllers: "none"
 spec:
   validationFailureAction: Enforce
   background: true
@@ -26,15 +27,21 @@ spec:
       - resources:
           kinds:
           - Pod
+          - Deployment
+          - StatefulSet
+          - DaemonSet
+          - ReplicaSet
     validate:
       message: "All containers must have CPU and memory requests and limits."
       pattern:
         spec:
-          containers:
-          - resources:
-              requests:
-                memory: "?*"
-                cpu: "?*"
-              limits:
-                memory: "?*"
-                cpu: "?*"
+          =(template):
+            spec:
+              containers:
+              - resources:
+                  requests:
+                    memory: "?*"
+                    cpu: "?*"
+                  limits:
+                    memory: "?*"
+                    cpu: "?*"

@@ -7,6 +7,7 @@ metadata:
     policies.kyverno.io/description: "Enforce restricted pod security standards."
     policies.kyverno.io/severity: "high"
     policies.kyverno.io/title: "Require Pod Security Standards"
+    pod-policies.kyverno.io/autogen-controllers: "none"
 spec:
   validationFailureAction: Enforce
   background: true
@@ -26,15 +27,21 @@ spec:
       - resources:
           kinds:
           - Pod
+          - Deployment
+          - StatefulSet
+          - DaemonSet
+          - ReplicaSet
     validate:
       message: "Containers must not run as root, must drop ALL capabilities, and must not allow privilege escalation."
       pattern:
         spec:
-          securityContext:
-            runAsNonRoot: true
-          containers:
-          - securityContext:
-              allowPrivilegeEscalation: false
-              capabilities:
-                drop:
-                - ALL
+          =(template):
+            spec:
+              securityContext:
+                runAsNonRoot: true
+              containers:
+              - securityContext:
+                  allowPrivilegeEscalation: false
+                  capabilities:
+                    drop:
+                    - ALL

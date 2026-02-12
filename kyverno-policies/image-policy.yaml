@@ -3,16 +3,21 @@ kind: ClusterPolicy
 metadata:
   name: require-image-tag
   annotations:
-    policies.kyverno.io/category: "Best Practices"
-    policies.kyverno.io/description: "Require that container images use a specific tag and not 'latest'."
-    policies.kyverno.io/severity: "medium"
-    policies.kyverno.io/title: "Require Image Tag"
-    pod-policies.kyverno.io/autogen-controllers: "none"
+    policies.kyverno.io/title: Require Image Tag
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/description: >-
+      Require that container images use a specific tag and not 'latest'.
 spec:
   validationFailureAction: Enforce
   background: true
   rules:
   - name: require-image-tag
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
     exclude:
       any:
       - resources:
@@ -22,24 +27,19 @@ spec:
           - kyverno
           - ingress-nginx
           - falco
-    match:
-      any:
-      - resources:
-          kinds:
-          - Pod
-          - Deployment
-          - StatefulSet
-          - DaemonSet
-          - ReplicaSet
     validate:
       message: "Container images must not use the 'latest' tag."
       pattern:
         spec:
-          =(template):
-            spec:
-              containers:
-              - image: "!*:latest"
+          containers:
+          - image: "!*:latest"
+  
   - name: require-image-from-allowed-registry
+    match:
+      any:
+      - resources:
+          kinds:
+          - Pod
     exclude:
       any:
       - resources:
@@ -49,30 +49,15 @@ spec:
           - kyverno
           - ingress-nginx
           - falco
-    match:
-      any:
-      - resources:
-          kinds:
-          - Pod
-          - Deployment
-          - StatefulSet
-          - DaemonSet
-          - ReplicaSet
     validate:
       message: "Images must come from allowed registries (ghcr.io or k3d-practice-registry)."
       anyPattern:
       - spec:
-          =(template):
-            spec:
-              containers:
-              - image: "ghcr.io/*"
+          containers:
+          - image: "ghcr.io/*"
       - spec:
-          =(template):
-            spec:
-              containers:
-              - image: "k3d-practice-registry:5000/*"
+          containers:
+          - image: "k3d-practice-registry:5000/*"
       - spec:
-          =(template):
-            spec:
-              containers:
-              - image: "localhost:5001/*"
+          containers:
+          - image: "localhost:5001/*"
